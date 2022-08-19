@@ -13,6 +13,8 @@ fastspeech_output
 .viminfo
 .ssh/*
 .gitconfig
+.lesshst
+.python_history
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -184,3 +186,5 @@ examples/neural_graphs/*.yml
 lightning_logs/
 *.nemo
 
+# Intermediary Dockerfiles
+setup/Dockerfile_*
