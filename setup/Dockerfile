@@ -14,7 +14,7 @@
 # limitations under the License.
 
 # TODO: Fix the image for GA
-ARG BASE_IMAGE=nvcr.io/nvidia/clara/megamolbart_taining:nemo_1.11_rc1
+ARG BASE_IMAGE=nvcr.io/nvidian/clara-lifesciences/bionemo_training:latest
 FROM ${BASE_IMAGE}
 
 ARG GITHUB_ACCESS_TOKEN
@@ -24,6 +24,8 @@ ARG NEMO_CHEM_HOME=/opt/nvidia/nemo_chem
 ARG NEMO_HOME=/opt/nvidia/nemo
 ARG CONDA_ENV=base
 ARG PACKAGE=0
+# NGC_TOKEN passed to config_model.sh to download model from ngc
+ARG NGC_TOKEN
 
 # Activating base environment
 RUN echo "source activate ${CONDA_ENV}" > /etc/bash.bashrc
@@ -48,13 +50,15 @@ RUN git clone https://github.com/MolecularAI/pysmilesutils.git --branch master /
     && cd /opt/pysmilesutils; pip install .
 
 RUN git clone --branch ${GITHUB_BRANCH} \
-    https://${GITHUB_ACCESS_TOKEN}@github.com/clara-parabricks/NeMo_MegaMolBART.git ${NEMO_CHEM_HOME}
+    https://${GITHUB_ACCESS_TOKEN}@github.com/gagank1/NeMo_MegaMolBART.git ${NEMO_CHEM_HOME}
 
 RUN cd ${NEMO_CHEM_HOME} && conda run -n ${CONDA_ENV} pip install -e .
 
 # Recompile Megatron helpers -- NOTE this will need to be done if PYTHONPATH changes later
 ENV PYTHONPATH=${NEMO_CHEM_HOME}:${NEMO_CHEM_HOME}/generated:${NEMO_HOME}:$PYTHONPATH
 ENV PACKAGE=${PACKAGE}
+# passed in from build args in the jenkins script
+ENV NGC_TOKEN=${NGC_TOKEN}
 ENV NEMO_CHEM_HOME=${NEMO_CHEM_HOME}
 ENV NEMO_HOME=${NEMO_HOME}
 ENV NEMO_BRANCH=${NEMO_BRANCH}
@@ -68,7 +72,7 @@ COPY ./setup/config_model.sh /tmp
 COPY ./setup/startup.sh /opt/nvidia
 COPY ./setup/entrypoint.sh /opt
 RUN chmod +x /opt/entrypoint.sh
-RUN bash /tmp/config_model.sh ${PACKAGE}
+RUN bash /tmp/config_model.sh ${PACKAGE} ${NGC_TOKEN}
 WORKDIR ${NEMO_CHEM_HOME}
 COPY ./.tmp/ /tmp/
 
