@@ -14,13 +14,21 @@ fi
 
 if [ ${PACKAGE} -eq 2 ]
 then
-    # 0. get ngc cli
+    # install ngc cli
     wget --content-disposition https://ngc.nvidia.com/downloads/ngccli_linux.zip && unzip ngccli_linux.zip && chmod u+x ngc-cli/ngc
     find ngc-cli/ -type f -exec md5sum {} + | LC_ALL=C sort | md5sum -c ngc-cli.md5
     echo "export PATH=\"\$PATH:$(pwd)/ngc-cli\"" >> ~/.bash_profile && source ~/.bash_profile
     
-    # 1. download model from ngc into /models
-    # 2. download cheminformatics repo for chembench
-        # mkdir/git clone, command from the cheminformatics dockerfile
+    # download model from ngc into /models
+    cwd=$(pwd)
+    mkdir -p /models
+    cd /models
+    ngc registry model download-version "nvstaging/clara/megamolbart"
+    cd $cwd
+
+    # download cheminformatics repo for chembench
+    mkdir -p /opt/nvidia && \
+        git clone https://github.com/NVIDIA/cheminformatics.git \
+        --branch rilango/merged_bm_0.2 /opt/nvidia/cheminformatics
     
 fi
