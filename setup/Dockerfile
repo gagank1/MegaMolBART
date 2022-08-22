@@ -71,15 +71,15 @@ RUN NEMO_PATH=$(python -c 'import nemo; print(nemo.__path__[0])') && \
    cd ${NEMO_PATH}/collections/nlp/data/language_modeling/megatron && \
    make
 
-RUN mkdir -p ./.tmp
-COPY ./.tmp/ /tmp/
+# RUN mkdir -p ./.tmp
+# COPY ./.tmp/ /tmp/
 COPY ./setup/config_model.sh /tmp
 COPY ./setup/startup.sh /opt/nvidia
 COPY ./setup/entrypoint.sh /opt
 RUN chmod +x /opt/entrypoint.sh
 RUN bash /tmp/config_model.sh ${PACKAGE} ${NGC_TOKEN}
 WORKDIR ${NEMO_CHEM_HOME}
-COPY ./.tmp/ /tmp/
+# COPY ./.tmp/ /tmp/
 
 ENTRYPOINT ["/opt/entrypoint.sh"]
 CMD [ "bash", "-c", "/opt/nvidia/startup.sh"]
