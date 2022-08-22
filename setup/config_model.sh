@@ -25,7 +25,7 @@ then
     cwd=$(pwd)
     mkdir -p /models
     cd /models
-    ngc registry model download-version "nvstaging/clara/megamolbart"
+    ngc registry model download-version "nvstaging/clara/megamolbart:0.2.0"
     cd $cwd
 
     # download cheminformatics repo for chembench
