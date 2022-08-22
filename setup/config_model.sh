@@ -18,6 +18,8 @@ then
     wget --content-disposition https://ngc.nvidia.com/downloads/ngccli_linux.zip && unzip ngccli_linux.zip && chmod u+x ngc-cli/ngc
     find ngc-cli/ -type f -exec md5sum {} + | LC_ALL=C sort | md5sum -c ngc-cli.md5
     echo "export PATH=\"\$PATH:$(pwd)/ngc-cli\"" >> ~/.bash_profile && source ~/.bash_profile
+
+    # TODO: set ngc token before downloading the model from the ngc registry
     
     # download model from ngc into /models
     cwd=$(pwd)
