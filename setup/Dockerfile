@@ -39,6 +39,10 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         wget git unzip tmux vim && \
     rm -rf /var/lib/apt/lists/*
 
+# make /tmp if it does not exist
+RUN mkdir -p /tmp
+
+
 ## Setup - Install and upgrade additional packages
 # RUN pip install --upgrade numpy wandb
 # RUN pip install --upgrade einops
@@ -67,6 +71,7 @@ RUN NEMO_PATH=$(python -c 'import nemo; print(nemo.__path__[0])') && \
    cd ${NEMO_PATH}/collections/nlp/data/language_modeling/megatron && \
    make
 
+RUN mkdir -p ./.tmp
 COPY ./.tmp/ /tmp/
 COPY ./setup/config_model.sh /tmp
 COPY ./setup/startup.sh /opt/nvidia
