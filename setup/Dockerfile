@@ -13,8 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# TODO: Fix the image for GA
-ARG BASE_IMAGE=nvcr.io/nvidian/clara-lifesciences/bionemo_training:latest
+ARG BASE_IMAGE=nvcr.io/nvidia/clara/megamolbart_taining:nemo_1.11_rc1
 FROM ${BASE_IMAGE}
 
 ARG GITHUB_ACCESS_TOKEN
@@ -54,7 +53,7 @@ RUN git clone https://github.com/MolecularAI/pysmilesutils.git --branch master /
     && cd /opt/pysmilesutils; pip install .
 
 RUN git clone --branch ${GITHUB_BRANCH} \
-    https://${GITHUB_ACCESS_TOKEN}@github.com/gagank1/NeMo_MegaMolBART.git ${NEMO_CHEM_HOME}
+    https://${GITHUB_ACCESS_TOKEN}@github.com/gagank1/MegaMolBART.git ${NEMO_CHEM_HOME}
 
 RUN cd ${NEMO_CHEM_HOME} && conda run -n ${CONDA_ENV} pip install -e .
 
@@ -77,6 +76,7 @@ COPY ./setup/config_model.sh /tmp
 COPY ./setup/startup.sh /opt/nvidia
 COPY ./setup/entrypoint.sh /opt
 RUN chmod +x /opt/entrypoint.sh
+ENV NOTEBOOK_HOME=/opt/nvidia/nemo_chem/examples/chem/nbs
 RUN bash /tmp/config_model.sh ${PACKAGE} ${NGC_TOKEN}
 WORKDIR ${NEMO_CHEM_HOME}
 # COPY ./.tmp/ /tmp/
